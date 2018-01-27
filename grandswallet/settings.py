@@ -163,6 +163,9 @@ SERVICES = {
         'application': os.environ.get('FIINLAB_APPLICATION', 'CMPXA003'),
         'username': os.environ.get('FIINLAB_USERNAME', 'TCPIP'),
         'password': os.environ.get('FIINLAB_PASSWORD', '12345678')
+    },
+    'messaging': {
+        'enable': os.environ.get('SMS_ENABLE', False)
     }
 }
 

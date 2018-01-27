@@ -2,8 +2,7 @@ from grandswallet.fiinlab.services import FiinlabService
 from base64 import b64encode
 from random import choice
 from string import digits
-from django.conf import settings
-from boto3 import client
+from grandswallet.messaging import send_sms
 
 
 def on_merchant_sign_up(sender, instance, created, **kwargs):
@@ -18,13 +17,9 @@ def on_merchant_sign_up(sender, instance, created, **kwargs):
         code=code
     )
 
-    if not settings.DEBUG:
-        aws = client('sns')
-
-        aws.publish(
-            PhoneNumber='+52{}'.format(phone.phone_number),
-            Message='Tu codigo de verificacion es: {}'.format(code)
-        )
+    send_sms(
+        phone.phone_number,
+        'Tu codigo de verificacion es: {}'.format(code))
 
 
 def on_merchant_active(sender, instance, created, **kwargs):
