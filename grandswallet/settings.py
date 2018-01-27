@@ -33,7 +33,8 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django_extensions',
-    'rest_framework'
+    'rest_framework',
+    'grandswallet.merchants'
 ]
 
 MIDDLEWARE = [
