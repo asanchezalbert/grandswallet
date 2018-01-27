@@ -5,6 +5,10 @@ from grandswallet.fiinlab.services import FiinlabService
 from base64 import b64encode
 
 
+def gen_code_for_exchange():
+    return ''.join(choice(digits) for i in range(12))
+
+
 def gen_send_verification_code(user, entity):
     code = ''.join(choice(digits) for i in range(12))
     phone = entity.phones.first()
@@ -16,6 +20,18 @@ def gen_send_verification_code(user, entity):
     send_sms(
         phone.phone_number,
         'Tu codigo de verificacion es: {}'.format(code))
+
+
+def send_exchange_code(code):
+    if not code.phone_number:
+        return
+
+    customer = code.account.customer
+
+    send_sms(
+        code.phone_number,
+        '{} Te ha enviado ${:0,.2f}, tu código es: {}'.format(
+            customer.first_name, code.amount, code.code))
 
 
 def gen_n2_account(user, entity):

@@ -4,6 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from grandswallet.fiinlab.services import FiinlabService
 from django.utils.functional import cached_property
+from decimal import Decimal
 
 
 class User(AbstractBaseUser):
@@ -171,6 +172,11 @@ class Account(models.Model):
         s = FiinlabService()
 
         return s.balances(self.account_number)
+
+    @property
+    def available_balance(self):
+        return Decimal(next(filter(
+            lambda i: i['code'] == '4900', self.balances))['amount'])
 
     class Meta:
         abstract = True

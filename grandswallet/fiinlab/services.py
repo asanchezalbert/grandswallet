@@ -78,7 +78,7 @@ class FiinlabService:
         )
 
         logger.info(
-            'Fiinlab: /%s [%s] => %s',
+            'Fiinlab: %s [%s] => %s',
             transaction_type, req.status_code, req.text)
 
         res = req.json()
