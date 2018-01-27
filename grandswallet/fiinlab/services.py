@@ -60,13 +60,13 @@ class FiinlabService:
 
         return res
 
-    def transaction(self, transaction_type, payload={}):
+    def transaction(self, transaction_type, payload={}, account='00'):
 
         self.login()
 
         payload.update({
             'trans_type': transaction_type,
-            'account': '00'
+            'account': account
         })
 
         req = requests.post(
@@ -83,10 +83,22 @@ class FiinlabService:
 
         res = req.json()
 
-        if res['code'] != '00':
+        if res['code'] not in ('00', '06'):
             raise Exception(res['message'])
 
         return res['data']
 
     def create_n2_account(self, info={}):
         return self.transaction('COREAOS001', info)
+
+    def balances(self, account_number):
+        res = self.transaction('BENQ0002', {
+            'custaccount': account_number
+        }, '01')
+
+        return map(lambda i: {
+            'code': i['Code'],
+            'name': i['Name'],
+            'description': i['Description'],
+            'amount': i['Amount']['_']
+        }, res['message'])

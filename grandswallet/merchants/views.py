@@ -1,5 +1,6 @@
 from django.db.transaction import atomic
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from . import serializers, models
@@ -10,7 +11,7 @@ from grandswallet.authentication import (
 
 class SignUpView(APIView):
     permission_classes = []
-    serializer_class = serializers.SignUpSerializer
+    serializer_class = serializers.MerchantSerializer
 
     @atomic()
     def post(self, request, *args, **kwargs):
@@ -73,3 +74,17 @@ class DocumentsView(APIView):
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProfileView(RetrieveAPIView):
+    serializer_class = serializers.MerchantSerializer
+
+    def get_object(self):
+        return self.request.user.merchant
+
+
+class AccountsView(ListAPIView):
+    serializer_class = serializers.AccountSerializer
+
+    def get_queryset(self):
+        return self.request.user.merchant.accounts.all()

@@ -25,12 +25,14 @@ class MerchantAddressSerializer(serializers.ModelSerializer):
         )
 
 
-class SignUpSerializer(serializers.ModelSerializer):
+class MerchantSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(
         max_length=10, min_length=10, write_only=True
     )
 
-    email_address = serializers.EmailField()
+    email_address = serializers.EmailField(
+        write_only=True
+    )
 
     password = serializers.CharField(
         max_length=255, write_only=True
@@ -42,6 +44,14 @@ class SignUpSerializer(serializers.ModelSerializer):
 
     address = MerchantAddressSerializer(
         write_only=True
+    )
+
+    is_active = serializers.ReadOnlyField(
+        source='user.is_active'
+    )
+
+    is_verified = serializers.ReadOnlyField(
+        source='user.is_verified'
     )
 
     def create(self, validated_data):
@@ -77,6 +87,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         model = models.Merchant
 
         fields = (
+            'id',
             'first_name',
             'middle_name',
             'last_name_paternal',
@@ -89,12 +100,19 @@ class SignUpSerializer(serializers.ModelSerializer):
             'password',
             'confirm_password',
             'address',
-            'created_date'
+            'created_date',
+            'is_active',
+            'is_verified'
         )
 
         read_only_fields = (
             'created_date',
         )
+
+        extra_kwargs = {
+            'elector_id': {'write_only': True},
+            'person_id': {'write_only': True}
+        }
 
 
 class VerificationSerializer(serializers.Serializer):
@@ -116,4 +134,16 @@ class DocumentSerializer(serializers.ModelSerializer):
         read_only_fields = (
             'merchant',
             'created_date'
+        )
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MerchantAccount
+
+        fields = (
+            'id',
+            'name',
+            'created_date',
+            'balances'
         )

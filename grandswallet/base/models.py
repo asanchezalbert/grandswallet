@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.timezone import now
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from grandswallet.fiinlab.services import FiinlabService
+from django.utils.functional import cached_property
 
 
 class User(AbstractBaseUser):
@@ -159,6 +161,12 @@ class Account(models.Model):
     created_date = models.DateTimeField(
         default=now
     )
+
+    @cached_property
+    def balances(self):
+        s = FiinlabService()
+
+        return s.balances(self.account_number)
 
     class Meta:
         abstract = True
