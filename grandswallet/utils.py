@@ -1,19 +1,15 @@
-from grandswallet.fiinlab.services import FiinlabService
-from base64 import b64encode
 from random import choice
 from string import digits
 from grandswallet.messaging import send_sms
+from grandswallet.fiinlab.services import FiinlabService
+from base64 import b64encode
 
 
-def on_merchant_sign_up(sender, instance, created, **kwargs):
-    if not created:
-        return
-
+def gen_send_verification_code(user, entity):
     code = ''.join(choice(digits) for i in range(12))
-    merchant = instance.merchant
-    phone = merchant.phones.first()
+    phone = entity.phones.first()
 
-    instance.verification_codes.create(
+    user.verification_codes.create(
         code=code
     )
 
@@ -22,31 +18,25 @@ def on_merchant_sign_up(sender, instance, created, **kwargs):
         'Tu codigo de verificacion es: {}'.format(code))
 
 
-def on_merchant_active(sender, instance, created, **kwargs):
-    merchant = instance.merchant
-    user = merchant.user
-
-    if not created or user.is_active:
-        return
-
+def gen_n2_account(user, entity):
     s = FiinlabService()
 
-    address = merchant.addresses.first()
-    document = instance
+    address = entity.addresses.first()
+    document = entity.documents.first()
 
     account = s.create_n2_account({
-        'custfname': merchant.first_name,
-        'custmname': merchant.middle_name,
-        'custlname': merchant.last_name_paternal,
-        'custaname': merchant.last_name_maternal,
-        'custdob': merchant.date_of_birth.strftime('%Y-%m-%d'),
-        'custuniquepopulationregistrycode': merchant.person_id,
+        'custfname': entity.first_name,
+        'custmname': entity.middle_name,
+        'custlname': entity.last_name_paternal,
+        'custaname': entity.last_name_maternal,
+        'custdob': entity.date_of_birth.strftime('%Y-%m-%d'),
+        'custuniquepopulationregistrycode': entity.person_id,
         'custgender': 1,
-        'custidnumber': merchant.elector_id,
+        'custidnumber': entity.elector_id,
         'custbirthregion': 'EM',
         'custbirthcountrycode': 'MX',
         'custcitizenshipcode': 'MX',
-        'custmsisdn': merchant.phones.first().phone_number,
+        'custmsisdn': entity.phones.first().phone_number,
         'custaddstreetname': address.street,
         'custaddhouseid': address.outdoor_number,
         'custaddhouseidadd': address.interior_number,
@@ -59,7 +49,7 @@ def on_merchant_active(sender, instance, created, **kwargs):
         'image1': b64encode(document.document_file.read())
     })
 
-    merchant.accounts.create(
+    entity.accounts.create(
         clabe=account['clabeaccount'],
         account_number=account['newaccount'],
         business=account['businesspartnerid']

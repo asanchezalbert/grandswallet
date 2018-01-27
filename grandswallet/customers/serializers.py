@@ -2,9 +2,9 @@ from rest_framework import serializers
 from . import models
 
 
-class MerchantAddressSerializer(serializers.ModelSerializer):
+class CustomerAddressSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.MerchantAddress
+        model = models.CustomerAddress
 
         fields = (
             'street',
@@ -25,7 +25,7 @@ class MerchantAddressSerializer(serializers.ModelSerializer):
         )
 
 
-class MerchantSerializer(serializers.ModelSerializer):
+class CustomerSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(
         max_length=10, min_length=10, write_only=True
     )
@@ -42,7 +42,7 @@ class MerchantSerializer(serializers.ModelSerializer):
         max_length=255, write_only=True
     )
 
-    address = MerchantAddressSerializer(
+    address = CustomerAddressSerializer(
         write_only=True
     )
 
@@ -62,29 +62,29 @@ class MerchantSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         address = validated_data.pop('address')
 
-        merchant = super().create(validated_data)
+        customer = super().create(validated_data)
 
-        merchant.emails.create(
+        customer.emails.create(
             email_address=email_address
         )
 
-        merchant.phones.create(
+        customer.phones.create(
             phone_number=phone_number
         )
 
-        merchant.addresses.create(**address)
+        customer.addresses.create(**address)
 
-        user = models.MerchantUser.objects.create(
-            merchant=merchant,
+        user = models.CustomerUser.objects.create(
+            customer=customer,
             username=phone_number
         )
         user.set_password(password)
         user.save()
 
-        return merchant
+        return customer
 
     class Meta:
-        model = models.Merchant
+        model = models.Customer
 
         fields = (
             'id',
@@ -123,23 +123,22 @@ class VerificationSerializer(serializers.Serializer):
 
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.MerchantDocument
+        model = models.CustomerDocument
 
         fields = (
-            'merchant',
+            'id',
             'document_file',
             'created_date'
         )
 
         read_only_fields = (
-            'merchant',
-            'created_date'
+            'created_date',
         )
 
 
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.MerchantAccount
+        model = models.CustomerAccount
 
         fields = (
             'id',

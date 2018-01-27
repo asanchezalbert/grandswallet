@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django_extensions',
     'rest_framework',
-    'grandswallet.merchants',
     'grandswallet.customers'
 ]
 
@@ -169,4 +168,7 @@ SERVICES = {
     }
 }
 
-AUTH_TOKEN_MODEL = 'grandswallet.merchants.models.MerchantToken'
+AUTH_TOKEN_MODEL = 'grandswallet.customers.models.CustomerToken'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_ROOT', os.path.join(BASE_DIR, 'media'))

@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from grandswallet.merchants.views import (
+from .views import (
     SignUpView, VerificationView, DocumentsView,
     ProfileView, AccountsView
 )

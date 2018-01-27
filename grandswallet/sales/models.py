@@ -2,8 +2,8 @@ from django.db import models
 from django.utils.timezone import now
 
 
-class SaleByCode(models.Model):
-    merchant = models.ForeignKey(
+class Sale(models.Model):
+    merchant_account = models.ForeignKey(
         'Merchant', models.CASCADE, related_name='sales'
     )
 

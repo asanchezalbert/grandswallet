@@ -11,7 +11,7 @@ from grandswallet.authentication import (
 
 class SignUpView(APIView):
     permission_classes = []
-    serializer_class = serializers.MerchantSerializer
+    serializer_class = serializers.CustomerSerializer
 
     @atomic()
     def post(self, request, *args, **kwargs):
@@ -19,7 +19,7 @@ class SignUpView(APIView):
         serializer.is_valid(raise_exception=True)
 
         merchant = serializer.save()
-        token = models.MerchantToken.objects.create(
+        token = models.CustomerToken.objects.create(
             user=merchant.user
         )
 
@@ -49,7 +49,7 @@ class VerificationView(APIView):
                 'detail': 'El código no es válido.'
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        models.MerchantVerified.objects.create(
+        models.CustomerVerified.objects.create(
             user=request.user,
             code=code
         )
@@ -70,21 +70,21 @@ class DocumentsView(APIView):
         serializer.is_valid(raise_exception=True)
 
         serializer.save(
-            merchant=request.user.merchant
+            customer=request.user.customer
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProfileView(RetrieveAPIView):
-    serializer_class = serializers.MerchantSerializer
+    serializer_class = serializers.CustomerSerializer
 
     def get_object(self):
-        return self.request.user.merchant
+        return self.request.user.customer
 
 
 class AccountsView(ListAPIView):
     serializer_class = serializers.AccountSerializer
 
     def get_queryset(self):
-        return self.request.user.merchant.accounts.all()
+        return self.request.user.customer.accounts.all()

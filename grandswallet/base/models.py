@@ -162,6 +162,10 @@ class Account(models.Model):
         default=now
     )
 
+    pin = models.CharField(
+        max_length=4, default=''
+    )
+
     @cached_property
     def balances(self):
         s = FiinlabService()
