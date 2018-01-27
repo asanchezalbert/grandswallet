@@ -102,3 +102,11 @@ class FiinlabService:
             'description': i['Description'],
             'amount': i['Amount']['_']
         }, res['message'])
+
+    def transfer(self, amount, from_account_number, to_account_number, reference=''):
+        self.transaction('INTTFR0002', {
+            'fromaccountnumber': from_account_number,
+            'toaccountnumber': to_account_number,
+            'amount': amount,
+            'reference': reference
+        })
