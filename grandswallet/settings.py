@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '😱'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', False)
+DEBUG = os.environ.get('DJANGO_DEBUG', False) == 'True'
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
@@ -150,4 +150,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+}
+
+SERVICES = {
+    'fiinlab': {
+        'url': os.environ.get('FIILAB_URL', 'http://217.32.246.192:9091/ESBConnector'),
+        'organization': os.environ.get('FIINLAB_ORGANIZATION', 'COMPARTAMOS'),
+        'channel': os.environ.get('FIINLAB_CHANEL', 'WEBSERVICE'),
+        'application': os.environ.get('FIINLAB_APPLICATION', 'CMPXA003'),
+        'username': os.environ.get('FIINLAB_USERNAME', 'TCPIP'),
+        'password': os.environ.get('FIINLAB_PASSWORD', '12345678')
+    }
 }

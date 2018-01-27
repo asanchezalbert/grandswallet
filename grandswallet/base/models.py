@@ -14,7 +14,24 @@ class User(AbstractBaseUser):
     )
 
     is_active = models.BooleanField(
-        default=True
+        default=False
+    )
+
+    is_verified = models.BooleanField(
+        default=False
+    )
+
+    class Meta:
+        abstract = True
+
+
+class UserVerificationCode(models.Model):
+    code = models.CharField(
+        max_length=12
+    )
+
+    created_date = models.DateTimeField(
+        default=now
     )
 
     class Meta:

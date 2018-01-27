@@ -3,10 +3,15 @@ from django.utils.timezone import now
 from grandswallet.base.models import (
     User, Address, Phone, Email, Document, Account
 )
+from rest_framework.authtoken.models import Token
 
 
 class Merchant(models.Model):
-    name = models.CharField(
+    first_name = models.CharField(
+        max_length=60
+    )
+
+    middle_name = models.CharField(
         max_length=60
     )
 
@@ -67,4 +72,10 @@ class MerchantDocument(Document):
 class MerchantAccount(Account):
     merchant = models.ForeignKey(
         'Merchant', models.CASCADE, related_name='accounts'
+    )
+
+
+class MerchantToken(Token):
+    user = models.OneToOneField(
+        'Merchant', models.CASCADE, related_name='token'
     )
