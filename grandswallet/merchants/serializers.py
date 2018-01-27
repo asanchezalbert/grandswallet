@@ -53,12 +53,6 @@ class SignUpSerializer(serializers.ModelSerializer):
         address = validated_data.pop('address')
 
         merchant = super().create(validated_data)
-        user = models.MerchantUser.objects.create(
-            merchant=merchant,
-            username=phone_number
-        )
-        user.set_password(password)
-        user.save()
 
         merchant.emails.create(
             email_address=email_address
@@ -69,6 +63,13 @@ class SignUpSerializer(serializers.ModelSerializer):
         )
 
         merchant.addresses.create(**address)
+
+        user = models.MerchantUser.objects.create(
+            merchant=merchant,
+            username=phone_number
+        )
+        user.set_password(password)
+        user.save()
 
         return merchant
 
@@ -81,6 +82,7 @@ class SignUpSerializer(serializers.ModelSerializer):
             'last_name_paternal',
             'last_name_maternal',
             'date_of_birth',
+            'elector_id',
             'person_id',
             'phone_number',
             'email_address',
@@ -92,4 +94,26 @@ class SignUpSerializer(serializers.ModelSerializer):
 
         read_only_fields = (
             'created_date',
+        )
+
+
+class VerificationSerializer(serializers.Serializer):
+    code = serializers.CharField(
+        max_length=12, min_length=12
+    )
+
+
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MerchantDocument
+
+        fields = (
+            'merchant',
+            'document_file',
+            'created_date'
+        )
+
+        read_only_fields = (
+            'merchant',
+            'created_date'
         )

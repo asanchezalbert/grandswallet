@@ -62,6 +62,8 @@ class FiinlabService:
 
     def transaction(self, transaction_type, payload={}):
 
+        self.login()
+
         payload.update({
             'trans_type': transaction_type,
             'account': '00'

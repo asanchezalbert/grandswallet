@@ -34,6 +34,19 @@ class UserVerificationCode(models.Model):
         default=now
     )
 
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    class Meta:
+        abstract = True
+
+
+class UserVerified(models.Model):
+    created_date = models.DateTimeField(
+        default=now
+    )
+
     class Meta:
         abstract = True
 
@@ -126,7 +139,7 @@ class Document(models.Model):
 
 class Account(models.Model):
     name = models.CharField(
-        max_length=255
+        max_length=255, default=''
     )
 
     # TODO: Add type of the account (ej.: N2, N4, etc.)
@@ -135,12 +148,12 @@ class Account(models.Model):
         max_length=18
     )
 
-    reference = models.CharField(
-        max_length=255
+    account_number = models.CharField(
+        max_length=12
     )
 
-    contract = models.CharField(
-        max_length=255
+    business = models.CharField(
+        max_length=12
     )
 
     created_date = models.DateTimeField(

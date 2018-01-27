@@ -150,6 +150,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'grandswallet.authentication.TokenAuthentication',
+    )
 }
 
 SERVICES = {
@@ -162,3 +165,5 @@ SERVICES = {
         'password': os.environ.get('FIINLAB_PASSWORD', '12345678')
     }
 }
+
+AUTH_TOKEN_MODEL = 'grandswallet.merchants.models.MerchantToken'

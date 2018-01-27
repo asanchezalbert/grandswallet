@@ -1,9 +1,12 @@
 from django.db import models
 from django.utils.timezone import now
+from django.db.models.signals import post_save
 from grandswallet.base.models import (
-    User, Address, Phone, Email, Document, Account
+    User, UserVerificationCode, UserVerified, Address, Phone, Email, Document, Account
 )
 from rest_framework.authtoken.models import Token
+from grandswallet.base.receivers import on_user_verified
+from . import receivers
 
 
 class Merchant(models.Model):
@@ -34,6 +37,10 @@ class Merchant(models.Model):
         max_length=18, default=''
     )
 
+    elector_id = models.CharField(
+        max_length=18, default=''
+    )
+
     created_date = models.DateTimeField(
         default=now
     )
@@ -42,6 +49,22 @@ class Merchant(models.Model):
 class MerchantUser(User):
     merchant = models.OneToOneField(
         'Merchant', models.CASCADE, related_name='user'
+    )
+
+
+class MerchantVerificationCode(UserVerificationCode):
+    user = models.ForeignKey(
+        'MerchantUser', models.CASCADE, related_name='verification_codes'
+    )
+
+
+class MerchantVerified(UserVerified):
+    user = models.OneToOneField(
+        'MerchantUser', models.CASCADE, related_name='verified'
+    )
+
+    code = models.OneToOneField(
+        'MerchantVerificationCode', models.CASCADE
     )
 
 
@@ -77,5 +100,15 @@ class MerchantAccount(Account):
 
 class MerchantToken(Token):
     user = models.OneToOneField(
-        'Merchant', models.CASCADE, related_name='token'
+        'MerchantUser', models.CASCADE, related_name='token'
     )
+
+
+post_save.connect(
+    receivers.on_merchant_sign_up, sender=MerchantUser)
+
+post_save.connect(
+    on_user_verified, sender=MerchantVerified)
+
+post_save.connect(
+    receivers.on_merchant_active, sender=MerchantDocument)
