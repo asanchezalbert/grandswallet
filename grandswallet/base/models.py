@@ -178,5 +178,11 @@ class Account(models.Model):
         return Decimal(next(filter(
             lambda i: i['code'] == '4900', self.balances))['amount'])
 
+    def transfer(self, amount, account):
+        s = FiinlabService()
+
+        return s.transfer(
+            amount, self.account_number, account.account_number)
+
     class Meta:
         abstract = True

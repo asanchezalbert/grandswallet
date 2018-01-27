@@ -30,8 +30,19 @@ def send_exchange_code(code):
 
     send_sms(
         code.phone_number,
-        '{} Te ha enviado ${:0,.2f}, tu código es: {}'.format(
+        '{} Te ha enviado ${:0,.2f}, tu codigo es: {}'.format(
             customer.first_name, code.amount, code.code))
+
+
+def send_exchange_notification(exchange):
+    code = exchange.code
+    customer = code.account.customer
+    phone = customer.phones.first()
+
+    send_sms(
+        phone.phone_number,
+        'Se realizo retiro por ${:0,.2f}. Authorizacion: {}'.format(
+            exchange.amount, exchange.authorization))
 
 
 def gen_n2_account(user, entity):

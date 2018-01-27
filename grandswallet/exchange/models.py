@@ -34,14 +34,33 @@ class Code(models.Model):
     )
 
 
-class CodeExchanged(models.Model):
+class Exchange(models.Model):
+    account = models.ForeignKey(
+        'customers.CustomerAccount', models.CASCADE, related_name='exchanges'
+    )
+
     code = models.OneToOneField(
         'Code', models.CASCADE, related_name='exchanged'
+    )
+
+    amount = models.DecimalField(
+        decimal_places=2, max_digits=19
     )
 
     created_date = models.DateTimeField(
         default=now
     )
 
+    details = models.TextField()
+
+    authorization = models.CharField(
+        max_length=128
+    )
+
+    transaction = models.CharField(
+        max_length=128
+    )
+
 
 post_save.connect(receivers.on_code_created, sender=Code)
+post_save.connect(receivers.on_exchange_created, sender=Exchange)
