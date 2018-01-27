@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django_extensions',
     'rest_framework',
-    'grandswallet.merchants'
+    'grandswallet.merchants',
+    'grandswallet.customers'
 ]
 
 MIDDLEWARE = [

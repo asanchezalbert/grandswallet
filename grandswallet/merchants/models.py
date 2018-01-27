@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils.timezone import now
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.validators import UnicodeUsernameValidator
+from grandswallet.base.models import (
+    User, Address, Phone, Email, Document, Account
+)
 
 
 class Merchant(models.Model):
@@ -33,92 +34,37 @@ class Merchant(models.Model):
     )
 
 
-class MerchantAccount(AbstractBaseUser):
+class MerchantUser(User):
     merchant = models.OneToOneField(
-        'Merchant', models.CASCADE, related_name='account'
-    )
-
-    username = models.CharField(
-        max_length=150, unique=True, validators=[UnicodeUsernameValidator()]
-    )
-
-    password = models.CharField(
-        max_length=255, default=''
-    )
-
-    is_active = models.BooleanField(
-        default=True
+        'Merchant', models.CASCADE, related_name='user'
     )
 
 
-class MerchantAddress(models.Model):
+class MerchantAddress(Address):
     merchant = models.ForeignKey(
         'Merchant', models.CASCADE, related_name='addresses'
     )
 
-    street = models.CharField(
-        max_length=1024
-    )
 
-    outdoor_number = models.CharField(
-        max_length=12
-    )
-
-    interior_number = models.CharField(
-        max_length=12, default=''
-    )
-
-    neighborhood = models.CharField(
-        max_length=64
-    )
-
-    municipality = models.CharField(
-        max_length=64
-    )
-
-    city = models.CharField(
-        max_length=64
-    )
-
-    state = models.CharField(
-        max_length=64
-    )
-
-    country = models.CharField(
-        max_length=64
-    )
-
-    postal_code = models.CharField(
-        max_length=5
-    )
-
-    created_date = models.DateTimeField(
-        default=now
-    )
-
-
-class MerchantPhone(models.Model):
+class MerchantPhone(Phone):
     merchant = models.ForeignKey(
         'Merchant', models.CASCADE, related_name='phones'
     )
 
-    phone_number = models.CharField(
-        max_length=10
-    )
 
-    created_date = models.DateTimeField(
-        default=now
-    )
-
-
-class MerchantEmail(models.Model):
+class MerchantEmail(Email):
     merchant = models.ForeignKey(
         'Merchant', models.CASCADE, related_name='emails'
     )
 
-    email_address = models.EmailField(
+
+class MerchantDocument(Document):
+    merchant = models.ForeignKey(
+        'Merchant', models.CASCADE, related_name='documents'
     )
 
-    created_date = models.DateTimeField(
-        default=now
+
+class MerchantAccount(Account):
+    merchant = models.ForeignKey(
+        'Merchant', models.CASCADE, related_name='accounts'
     )
